@@ -9,28 +9,44 @@ public class Player : MonoBehaviour
     [SerializeField]
     private float _speedMultiplier = 2f;
     [SerializeField]
-    private GameObject _laserPrefab;
-    [SerializeField]
-    private GameObject _tripleshotprefab;
-    [SerializeField]
     private float _fireRate = 0.5f;
     private float _canFire = -1f;
+
+    [SerializeField]
+    private GameObject _laserPrefab;
+    [SerializeField]
+    private GameObject _tripleShotPrefab;
+    [SerializeField]
+    private GameObject _shield;
+
     [SerializeField]
     private int _lives = 3;
+    [SerializeField]
+    private int _score;
+    [SerializeField]
+    private int _points = 10;
+
     private SpawnManager _spawnManager;
+    private UIManager _uiManager;
 
-    public bool _isTripleShotActive = false;
-    public bool _isSpeedBoostActive = false;
-
+    private bool _isTripleShotActive = false;
+    private bool _isSpeedBoostActive = false;
+    private bool _isShieldActive = false;
 
     void Start()
     {
         transform.position = new Vector3(0, 0, 0);
         _spawnManager = GameObject.Find("Spawn_Manager").GetComponent<SpawnManager>();
+        _uiManager = GameObject.Find("Canvas").GetComponent<UIManager>();
 
         if (_spawnManager == null )
         {
             Debug.LogError("Spawn Manager is NULL.");
+        }
+        
+        if (_uiManager == null )
+        {
+            Debug.LogError("UI Manager is NULL.");
         }
     }
 
@@ -76,7 +92,7 @@ public class Player : MonoBehaviour
         
         if (_isTripleShotActive)
         {
-            Instantiate(_tripleshotprefab, transform.position, Quaternion.identity) ;
+            Instantiate(_tripleShotPrefab, transform.position, Quaternion.identity) ;
         }
         else
         {
@@ -86,6 +102,13 @@ public class Player : MonoBehaviour
 
     public void Damage()
     {
+        if (_isShieldActive == true)
+        {
+            _isShieldActive = false;
+            _shield.SetActive(false);
+            return;
+        }
+
         _lives--;
         
         if (_lives < 1)
@@ -122,5 +145,19 @@ public class Player : MonoBehaviour
         yield return new WaitForSeconds(5.0f);
         _isSpeedBoostActive = false;
         _speed /= _speedMultiplier;
+    }
+
+    public void ShieldActive()
+    {
+        _isShieldActive = true;
+        _shield.SetActive(true);
+    }
+
+    public void AddToScore()
+    {
+        _score += _points;
+        _uiManager.UpdateScore(_score);
+        Debug.Log("Score: " + _score);
+        Debug.Log("Points: " + _points);
     }
 }
