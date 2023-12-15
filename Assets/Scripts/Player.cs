@@ -23,8 +23,6 @@ public class Player : MonoBehaviour
     private int _lives = 3;
     [SerializeField]
     private int _score;
-    [SerializeField]
-    private int _points = 10;
 
     private SpawnManager _spawnManager;
     private UIManager _uiManager;
@@ -110,6 +108,7 @@ public class Player : MonoBehaviour
         }
 
         _lives--;
+        _uiManager.UpdateLives(_lives);
         
         if (_lives < 1)
         {
@@ -153,11 +152,9 @@ public class Player : MonoBehaviour
         _shield.SetActive(true);
     }
 
-    public void AddToScore()
+    public void AddToScore(int points)
     {
-        _score += _points;
+        _score += points;
         _uiManager.UpdateScore(_score);
-        Debug.Log("Score: " + _score);
-        Debug.Log("Points: " + _points);
     }
 }
