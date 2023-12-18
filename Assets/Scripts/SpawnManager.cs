@@ -15,13 +15,18 @@ public class SpawnManager : MonoBehaviour
 
     void Start()
     {
+        
+    }
+
+    public void StartSpawning()
+    {
         StartCoroutine(SpawnEnemyRoutine());
         StartCoroutine(SpawnPowerupRoutine());
     }
 
     IEnumerator SpawnEnemyRoutine()
     {
-        yield return null;
+        yield return new WaitForSeconds(3.0f);
         
         while (_stopSpawning == false)
         {
@@ -34,7 +39,7 @@ public class SpawnManager : MonoBehaviour
 
     IEnumerator SpawnPowerupRoutine()
     {
-        yield return null;
+        yield return new WaitForSeconds(3.0f);
         while (_stopSpawning == false)
         {
             int powerupID = Random.Range(0, 3);

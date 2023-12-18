@@ -18,6 +18,10 @@ public class Player : MonoBehaviour
     private GameObject _tripleShotPrefab;
     [SerializeField]
     private GameObject _shield;
+    [SerializeField]
+    private GameObject _leftEngine;
+    [SerializeField] 
+    private GameObject _rightEngine;
 
     [SerializeField]
     private int _lives = 3;
@@ -108,6 +112,16 @@ public class Player : MonoBehaviour
         }
 
         _lives--;
+
+        if (_lives == 2)
+        {
+            _rightEngine.SetActive(true);   
+        }
+        else if ( _lives == 1)
+        {
+            _leftEngine.SetActive(true);
+        }
+
         _uiManager.UpdateLives(_lives);
         
         if (_lives < 1)

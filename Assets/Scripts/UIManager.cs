@@ -19,7 +19,6 @@ public class UIManager : MonoBehaviour
     private Player _player;
     [SerializeField]
     private bool _isGameOver;
-    [SerializeField]
     private GameManager _gameManager;
 
     void Start()
