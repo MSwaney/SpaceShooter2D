@@ -8,6 +8,17 @@ public class Powerup : MonoBehaviour
     private float _speed = 3f;
     [SerializeField] // 0 = Triple shot 1 = Speed 2 = Shields
     private int powerupID;
+    private AudioSource _audioSource;
+
+    private void Start()
+    {
+        _audioSource = GameObject.Find("Pickup").GetComponent<AudioSource>();
+
+        if (_audioSource == null )
+        {
+            Debug.LogError("Audio Source on Powerup is NULL.");
+        }
+    }
 
     void Update()
     {
@@ -43,6 +54,7 @@ public class Powerup : MonoBehaviour
                         break;
                 }
             }
+            _audioSource.Play();
             Destroy(this.gameObject);
         }
     }

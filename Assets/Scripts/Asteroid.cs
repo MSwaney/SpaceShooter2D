@@ -9,21 +9,21 @@ public class Asteroid : MonoBehaviour
     [SerializeField]
     private GameObject _explosionPrefab;
     private SpawnManager _spawnManager;
-    // Start is called before the first frame update
+
     void Start()
     {
         _spawnManager = GameObject.Find("Spawn_Manager").GetComponent<SpawnManager>();
+
+        if (_spawnManager == null)
+        {
+            Debug.LogError("Spawn Manager is NULL.");
+        }
     }
 
-    // Update is called once per frame
     void Update()
     {
         transform.Rotate(Vector3.forward * _rotateSpeed * Time.deltaTime);
     }
-
-    //check for laser collision (trigger)
-    //instantiate explosion at position of the asteroid (us)
-    //destroy explosion after 3 seconds
 
     private void OnTriggerEnter2D(Collider2D other)
     {
@@ -45,7 +45,5 @@ public class Asteroid : MonoBehaviour
     IEnumerator DelayAsteroidDestructionRoutine()
     {
         yield return new WaitForSeconds(1f);
-        Debug.Log("Made it!");
-
     }
 }
