@@ -7,6 +7,8 @@ public class Player : MonoBehaviour
     [SerializeField] 
     private float _speed = 3.5f;
     [SerializeField]
+    private float _currentSpeed;
+    [SerializeField]
     private float _speedMultiplier = 2f;
     [SerializeField]
     private float _fireRate = 0.5f;
@@ -40,6 +42,7 @@ public class Player : MonoBehaviour
 
     void Start()
     {
+        _currentSpeed = _speed;
         transform.position = new Vector3(0, 0, 0);
         _spawnManager = GameObject.Find("Spawn_Manager").GetComponent<SpawnManager>();
         _uiManager = GameObject.Find("Canvas").GetComponent<UIManager>();
@@ -75,25 +78,25 @@ public class Player : MonoBehaviour
     {
         float horizontalInput = Input.GetAxis("Horizontal");
         float verticalInput = Input.GetAxis("Vertical");
-        transform.Translate(Vector3.right * horizontalInput * _speed * Time.deltaTime);
-        transform.Translate(Vector3.up * verticalInput * _speed * Time.deltaTime);
+        transform.Translate(Vector3.right * horizontalInput * _currentSpeed * Time.deltaTime);
+        transform.Translate(Vector3.up * verticalInput * _currentSpeed * Time.deltaTime);
 
         if (transform.position.y >= 0)
         {
             transform.position = new Vector3(transform.position.x, 0, 0);
         }
-        else if (transform.position.y <= -3.8f)
+        else if (transform.position.y <= -6.5f)
         {
-            transform.position = new Vector3(transform.position.x, -3.8f, 0);
+            transform.position = new Vector3(transform.position.x, -6.5f, 0);
         }
 
-        if (transform.position.x > 11.3f)
+        if (transform.position.x > 16.5f)
         {
-            transform.position = new Vector3(-11.3f, transform.position.y, 0);
+            transform.position = new Vector3(-16.5f, transform.position.y, 0);
         }
-        else if (transform.position.x < -11.3f)
+        else if (transform.position.x < -16.5f)
         {
-            transform.position = new Vector3(11.3f, transform.position.y, 0);
+            transform.position = new Vector3(16.5f, transform.position.y, 0);
         }
     }
     
@@ -159,7 +162,7 @@ public class Player : MonoBehaviour
     {
         if (_isSpeedBoostActive == false)
         {
-            _speed *= _speedMultiplier;
+            _currentSpeed *= _speedMultiplier;
             _isSpeedBoostActive = true;
         }
         StartCoroutine(SpeedBoostPowerDownRoutine());
@@ -169,7 +172,11 @@ public class Player : MonoBehaviour
     {
         yield return new WaitForSeconds(5.0f);
         _isSpeedBoostActive = false;
-        _speed /= _speedMultiplier;
+        _currentSpeed /= _speedMultiplier;
+        if (_currentSpeed < _speed)
+        {
+            _currentSpeed = _speed;
+        }
     }
 
     public void ShieldActive()

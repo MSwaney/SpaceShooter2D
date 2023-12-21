@@ -13,6 +13,13 @@ public class GameManager : MonoBehaviour
         {
             SceneManager.LoadScene(1); //Current Game Scene
         }
+
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            Debug.Log("ESC pressed");
+
+            Application.Quit();
+        }
     }
 
     public void GameOver()
