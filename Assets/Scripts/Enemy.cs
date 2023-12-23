@@ -52,12 +52,7 @@ public class Enemy : MonoBehaviour
             {
                 player.Damage();
             }
-            _animator.SetTrigger("OnEnemyDeath");
-            _speed = 0f;
-            _audioSource.Play();
-            Destroy(GetComponent<Collider2D>());
-            _isDead = true;
-            Destroy(this.gameObject, 2.8f);
+            DestroyEnemy();
         }
 
         if (other.tag == "Laser")
@@ -69,13 +64,8 @@ public class Enemy : MonoBehaviour
                 {
                     _player.AddToScore(10);
                 }
-                _animator.SetTrigger("OnEnemyDeath");
-                _speed = 0f;
-                _audioSource.Play();
-                Destroy(GetComponent<Collider2D>());
+                DestroyEnemy();
                 Destroy(other.gameObject);
-                _isDead = true;
-                Destroy(this.gameObject, 2.8f);
             }
         }
     }
@@ -91,5 +81,15 @@ public class Enemy : MonoBehaviour
                 laser.GetComponent<Laser>().AssignEnemyLaser();
             }
         }
+    }
+
+    private void DestroyEnemy()
+    {
+        _animator.SetTrigger("OnEnemyDeath");
+        _speed = 0f;
+        _audioSource.Play();
+        Destroy(GetComponent<Collider2D>());
+        _isDead = true;
+        Destroy(this.gameObject, 2.8f);
     }
 }
