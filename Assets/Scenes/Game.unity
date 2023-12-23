@@ -1061,6 +1061,7 @@ MonoBehaviour:
   _currentSpeed: 0
   _speedMultiplier: 1.5
   _fireRate: 0.15
+  _speedBoost: 1.5
   _laserPrefab: {fileID: 4977517948103785501, guid: 5eed94b2dd4d66c4491f451a20880c01,
     type: 3}
   _tripleShotPrefab: {fileID: 3558292830538472766, guid: a8c229f873014ed4ebd0fae7d3d6ec92,

@@ -13,6 +13,8 @@ public class Player : MonoBehaviour
     [SerializeField]
     private float _fireRate = 0.5f;
     private float _canFire = -1f;
+    [SerializeField]
+    private float _speedBoost;
 
     [SerializeField]
     private GameObject _laserPrefab;
@@ -32,13 +34,13 @@ public class Player : MonoBehaviour
 
     private SpawnManager _spawnManager;
     private UIManager _uiManager;
-    
     [SerializeField] private AudioClip _laserAudio;
     private AudioSource _audioSource;
 
     private bool _isTripleShotActive = false;
     private bool _isSpeedBoostActive = false;
     private bool _isShieldActive = false;
+    private bool _isThrusterActive = false;
 
     void Start()
     {
@@ -80,6 +82,15 @@ public class Player : MonoBehaviour
         float verticalInput = Input.GetAxis("Vertical");
         transform.Translate(Vector3.right * horizontalInput * _currentSpeed * Time.deltaTime);
         transform.Translate(Vector3.up * verticalInput * _currentSpeed * Time.deltaTime);
+
+        if (Input.GetKeyDown(KeyCode.LeftShift)) 
+        {
+            _currentSpeed *= _speedBoost;
+        } 
+        else if (Input.GetKeyUp(KeyCode.LeftShift))
+        {
+            _currentSpeed /= _speedBoost;
+        }
 
         if (transform.position.y >= 0)
         {
