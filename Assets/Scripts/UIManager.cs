@@ -19,10 +19,13 @@ public class UIManager : MonoBehaviour
     private Player _player;
     [SerializeField]
     private bool _isGameOver;
+    [SerializeField]
+    private Text _ammoCountText;
     private GameManager _gameManager;
 
     void Start()
     {
+        _ammoCountText.text = "Ammo: " + 15;
         _scoreText.text = "Score: " + 0;
         _gameOverText.gameObject.SetActive(false);
         _restartText.gameObject.SetActive(false);
@@ -37,6 +40,15 @@ public class UIManager : MonoBehaviour
     public void UpdateScore(int playerScore)
     {
         _scoreText.text = "Score: " + playerScore.ToString();
+    }
+
+    public void UpdateAmmo(int ammoCount)
+    {
+        _ammoCountText.text = "Ammo: " + ammoCount.ToString();
+        if (_ammoCountText.text == "Ammo: 0")
+        {
+            _ammoCountText.GetComponent<Text>().color = Color.red;
+        }
     }
 
     public void UpdateLives(int currentLives)
