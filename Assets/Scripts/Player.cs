@@ -143,7 +143,6 @@ public class Player : MonoBehaviour
     {
         if (_isShieldActive == true)
         {
-            Debug.Log(_shieldLives);
             if (_shieldLives == 1)
             {
                 _shieldLives -= 1;
@@ -227,6 +226,12 @@ public class Player : MonoBehaviour
     public void SubractAmmo()
     {
         _ammoCount -= 1;
+        _uiManager.UpdateAmmo(_ammoCount);
+    }
+
+    public void AddAmmo()
+    {
+        _ammoCount += 10;
         _uiManager.UpdateAmmo(_ammoCount);
     }
 }
