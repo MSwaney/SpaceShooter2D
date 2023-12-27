@@ -49,6 +49,10 @@ public class UIManager : MonoBehaviour
         {
             _ammoCountText.GetComponent<Text>().color = Color.red;
         }
+        else
+        {
+            _ammoCountText.GetComponent <Text>().color = Color.white;
+        }
     }
 
     public void UpdateLives(int currentLives)

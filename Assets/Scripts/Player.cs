@@ -124,18 +124,19 @@ public class Player : MonoBehaviour
         {
             _canFire = Time.time + _fireRate;
         
-            if (_isTripleShotActive)
+            if (_isTripleShotActive && _ammoCount >= 3)
             {
-                Instantiate(_tripleShotPrefab, transform.position, Quaternion.identity) ;
+                Instantiate(_tripleShotPrefab, transform.position, Quaternion.identity);
+                this.SubractAmmo(3);
             }
-            else
+            else if (!_isTripleShotActive)
             {
                 Instantiate(_laserPrefab, transform.position + new Vector3(0, 1.05f, 0), Quaternion.identity);
+                this.SubractAmmo(1);
             }
 
             _audioSource.clip = _laserAudio;
             _audioSource.Play();
-            SubractAmmo();
         }
     }
 
@@ -223,15 +224,25 @@ public class Player : MonoBehaviour
         _uiManager.UpdateScore(_score);
     }
 
-    public void SubractAmmo()
+    public void SubractAmmo(int amount)
     {
-        _ammoCount -= 1;
+        _ammoCount -= amount;
         _uiManager.UpdateAmmo(_ammoCount);
     }
 
     public void AddAmmo()
     {
-        _ammoCount += 10;
+        if ( _ammoCount < 15 )
+        _ammoCount = 15;
         _uiManager.UpdateAmmo(_ammoCount);
+    }
+
+    public void AddHealth()
+    {
+        if (_lives < 3)
+        {
+            _lives++;
+            _uiManager.UpdateLives(_lives);            
+        }
     }
 }
