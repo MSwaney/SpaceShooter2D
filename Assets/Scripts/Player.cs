@@ -21,6 +21,8 @@ public class Player : MonoBehaviour
     [SerializeField]
     private GameObject _laserPrefab;
     [SerializeField]
+    private GameObject _multishotPrefab;
+    [SerializeField]
     private GameObject _tripleShotPrefab;
     [SerializeField]
     private GameObject _shield;
@@ -38,6 +40,8 @@ public class Player : MonoBehaviour
     private int _shieldLives = 1;
     [SerializeField]
     private int _ammoCount;
+    [SerializeField]
+    private int _numberOfMultiShotLasers;
 
     private SpawnManager _spawnManager;
     private UIManager _uiManager;
@@ -47,6 +51,7 @@ public class Player : MonoBehaviour
     private bool _isTripleShotActive = false;
     private bool _isSpeedBoostActive = false;
     private bool _isShieldActive = false;
+    private bool _laserOnCooldown = false;
 
     void Start()
     {
@@ -120,7 +125,7 @@ public class Player : MonoBehaviour
     
     void FireLaser()
     {
-        if (_ammoCount > 0)
+        if (_ammoCount > 0 && _laserOnCooldown == false)
         {
             _canFire = Time.time + _fireRate;
         
@@ -242,7 +247,33 @@ public class Player : MonoBehaviour
         if (_lives < 3)
         {
             _lives++;
-            _uiManager.UpdateLives(_lives);            
+            _uiManager.UpdateLives(_lives);
+            if (_lives == 2)
+            {
+                _leftEngine.SetActive(false);
+            }
+            else if (_lives == 3)
+            {
+                _rightEngine.SetActive(false);
+            }
         }
+    }
+
+    public void FireMultiShot()
+    {
+        StartCoroutine(LaserCooldown());
+        for (int i = 0; i < _numberOfMultiShotLasers; i++)
+        {
+            float angle = i * (360f /  _numberOfMultiShotLasers);
+            Quaternion laserRotation = Quaternion.Euler(0f, 0f, angle);
+            Instantiate(_multishotPrefab, transform.position, laserRotation);
+        }
+    }
+
+    private IEnumerator LaserCooldown()
+    {
+        _laserOnCooldown = true;
+        yield return new WaitForSeconds(3);
+        _laserOnCooldown = false;
     }
 }

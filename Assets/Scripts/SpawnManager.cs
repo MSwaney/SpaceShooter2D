@@ -42,10 +42,22 @@ public class SpawnManager : MonoBehaviour
         yield return new WaitForSeconds(3.0f);
         while (_stopSpawning == false)
         {
-            int powerupID = Random.Range(0, 5);
+            int powerupID = Random.Range(0, _powerups.Length);
             Vector3 posToSpawn = new Vector3(Random.Range(-14.5f, 14.5f), 11, 0);
-            int randomPowerUp = Random.Range(0, 5);
-            Instantiate(_powerups[randomPowerUp], posToSpawn, Quaternion.identity);
+            int randomPowerUp = Random.Range(0, _powerups.Length);
+            if (randomPowerUp == 5)
+            {
+                int chance = Random.Range(0, 101);
+                Debug.Log(chance);
+                if (chance % 10  == 0)
+                {
+                    Instantiate(_powerups[randomPowerUp], posToSpawn, Quaternion.identity);
+                }
+            } 
+            else
+            {
+                Instantiate(_powerups[randomPowerUp], posToSpawn, Quaternion.identity);
+            }
             yield return new WaitForSeconds(Random.Range(3f, 8f));
         }
     }
