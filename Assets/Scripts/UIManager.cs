@@ -18,10 +18,10 @@ public class UIManager : MonoBehaviour
     [SerializeField]
     private Player _player;
     [SerializeField]
-    private bool _isGameOver;
-    [SerializeField]
     private Text _ammoCountText;
     private GameManager _gameManager;
+
+    private bool _isGameOver;
 
     void Start()
     {

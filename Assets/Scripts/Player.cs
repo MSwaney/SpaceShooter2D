@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Accessibility;
+using UnityEngine.UI;
 
 public class Player : MonoBehaviour
 {
@@ -15,8 +16,16 @@ public class Player : MonoBehaviour
     private float _fireRate = 0.5f;
     private float _canFire = -1f;
     [SerializeField]
-    private float _speedBoost;
-   
+    private float _thrusterSpeed;
+    [SerializeField]
+    private float _thrusterBarDecreaseSpeed;
+    [SerializeField]
+    private float _thrusterBarIncreaseSpeed;
+    [SerializeField]
+    private float _thrusterCooldownDuration;
+    [SerializeField]
+    private float _thrusterCooldownTimer;
+
 
     [SerializeField]
     private GameObject _laserPrefab;
@@ -30,8 +39,12 @@ public class Player : MonoBehaviour
     private GameObject _leftEngine;
     [SerializeField] 
     private GameObject _rightEngine;
+    [SerializeField]
+    private GameObject _thrusterSlider;
+    [SerializeField]
+    private Transform _thrusterBar;
+    [SerializeField]
     private Color _shieldTransparency;
-
 
     [SerializeField]
     private int _lives = 3;
@@ -45,13 +58,15 @@ public class Player : MonoBehaviour
 
     private SpawnManager _spawnManager;
     private UIManager _uiManager;
-    [SerializeField] private AudioClip _laserAudio;
+    [SerializeField] 
+    private AudioClip _laserAudio;
     private AudioSource _audioSource;
 
     private bool _isTripleShotActive = false;
     private bool _isSpeedBoostActive = false;
     private bool _isShieldActive = false;
     private bool _laserOnCooldown = false;
+    private bool _thrusterOnCooldown = false;
 
     void Start()
     {
@@ -61,13 +76,15 @@ public class Player : MonoBehaviour
         _uiManager = GameObject.Find("Canvas").GetComponent<UIManager>();
         _audioSource = GetComponent<AudioSource>();
         _shieldTransparency = _shield.GetComponent<SpriteRenderer>().material.color;
+        _thrusterBar = _thrusterSlider.transform.GetChild(1);
+        _thrusterCooldownTimer = _thrusterCooldownDuration;
 
-        if (_spawnManager == null )
+        if (_spawnManager == null)
         {
             Debug.LogError("Spawn Manager is NULL.");
         }
-        
-        if (_uiManager == null )
+
+        if (_uiManager == null)
         {
             Debug.LogError("UI Manager is NULL.");
         }
@@ -81,6 +98,7 @@ public class Player : MonoBehaviour
     void Update()
     {
         CalculateMovement();
+        CalculateThrusterBar();
 
         if (Input.GetKeyDown(KeyCode.Space) && Time.time > _canFire)
         {
@@ -95,13 +113,17 @@ public class Player : MonoBehaviour
         transform.Translate(Vector3.right * horizontalInput * _currentSpeed * Time.deltaTime);
         transform.Translate(Vector3.up * verticalInput * _currentSpeed * Time.deltaTime);
 
-        if (Input.GetKeyDown(KeyCode.LeftShift)) 
+        if (Input.GetKeyDown(KeyCode.LeftShift) && _thrusterOnCooldown == false)
         {
-            _currentSpeed *= _speedBoost;
-        } 
+            _currentSpeed *= _thrusterSpeed;
+        }
         else if (Input.GetKeyUp(KeyCode.LeftShift))
         {
-            _currentSpeed /= _speedBoost;
+            _currentSpeed /= _thrusterSpeed;
+            if (_currentSpeed < _speed)
+            {
+                _currentSpeed = _speed;
+            }
         }
 
         if (transform.position.y >= 0)
@@ -122,13 +144,13 @@ public class Player : MonoBehaviour
             transform.position = new Vector3(16.5f, transform.position.y, 0);
         }
     }
-    
+
     void FireLaser()
     {
         if (_ammoCount > 0 && _laserOnCooldown == false)
         {
             _canFire = Time.time + _fireRate;
-        
+
             if (_isTripleShotActive && _ammoCount >= 3)
             {
                 Instantiate(_tripleShotPrefab, transform.position, Quaternion.identity);
@@ -153,7 +175,7 @@ public class Player : MonoBehaviour
             {
                 _shieldLives -= 1;
                 _shield.GetComponent<SpriteRenderer>().material.color = new Color(1.0f, 1.0f, 1.0f, 0.5f);
-            } 
+            }
             else if (_shieldLives == 0)
             {
                 _isShieldActive = false;
@@ -166,15 +188,15 @@ public class Player : MonoBehaviour
 
         if (_lives == 2)
         {
-            _rightEngine.SetActive(true);   
+            _rightEngine.SetActive(true);
         }
-        else if ( _lives == 1)
+        else if (_lives == 1)
         {
             _leftEngine.SetActive(true);
         }
 
         _uiManager.UpdateLives(_lives);
-        
+
         if (_lives < 1)
         {
             _spawnManager.OnPlayerDeath();
@@ -237,8 +259,8 @@ public class Player : MonoBehaviour
 
     public void AddAmmo()
     {
-        if ( _ammoCount < 15 )
-        _ammoCount = 15;
+        if (_ammoCount < 15)
+            _ammoCount = 15;
         _uiManager.UpdateAmmo(_ammoCount);
     }
 
@@ -264,7 +286,7 @@ public class Player : MonoBehaviour
         StartCoroutine(LaserCooldown());
         for (int i = 0; i < _numberOfMultiShotLasers; i++)
         {
-            float angle = i * (360f /  _numberOfMultiShotLasers);
+            float angle = i * (360f / _numberOfMultiShotLasers);
             Quaternion laserRotation = Quaternion.Euler(0f, 0f, angle);
             Instantiate(_multishotPrefab, transform.position, laserRotation);
         }
@@ -275,5 +297,58 @@ public class Player : MonoBehaviour
         _laserOnCooldown = true;
         yield return new WaitForSeconds(3);
         _laserOnCooldown = false;
+    }
+
+    private void CalculateThrusterBar()
+    {
+        if (Input.GetKey(KeyCode.LeftShift) && !_thrusterOnCooldown)
+        {
+            DecreaseThrusterBar();
+        }
+        else if (_thrusterOnCooldown || (!Input.GetKey(KeyCode.LeftShift) && _thrusterBar.transform.localScale.x < 1.0f))
+        {
+            if (_thrusterOnCooldown)
+            {
+                UpdateThrusterCooldown();
+            }
+            else
+            {
+                IncreaseThrusterBar();
+            }
+        }
+    }
+
+    private void IncreaseThrusterBar()
+    {
+        float thrusterPower = Mathf.Clamp01(_thrusterBar.transform.localScale.x + _thrusterBarIncreaseSpeed * Time.deltaTime);
+        _thrusterBar.transform.localScale = new Vector3(thrusterPower, 1.0f, 1.0f);
+
+        if (_thrusterBar.transform.localScale.x > 0.0f)
+        {
+            _thrusterCooldownTimer = _thrusterCooldownDuration;
+        }
+    }
+
+    private void DecreaseThrusterBar()
+    {
+        float thrusterPower = Mathf.Clamp01(_thrusterBar.transform.localScale.x - _thrusterBarDecreaseSpeed * Time.deltaTime);
+        _thrusterBar.transform.localScale = new Vector3(thrusterPower, 1.0f, 1.0f);
+
+        if (_thrusterBar.transform.localScale.x == 0.0f)
+        {
+            _thrusterOnCooldown = true;
+            _currentSpeed = _speed;
+        }
+    }
+
+    private void UpdateThrusterCooldown()
+    {
+        _thrusterCooldownTimer -= Time.deltaTime;
+
+        if (_thrusterCooldownTimer <= 0.0f)
+        {
+            _thrusterOnCooldown = false;
+            _thrusterCooldownTimer = 0.0f;
+        }
     }
 }
