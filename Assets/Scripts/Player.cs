@@ -45,6 +45,8 @@ public class Player : MonoBehaviour
     private Transform _thrusterBar;
     [SerializeField]
     private Color _shieldTransparency;
+    private CameraShake _cameraShake;
+
 
     [SerializeField]
     private int _lives = 3;
@@ -78,6 +80,7 @@ public class Player : MonoBehaviour
         _shieldTransparency = _shield.GetComponent<SpriteRenderer>().material.color;
         _thrusterBar = _thrusterSlider.transform.GetChild(1);
         _thrusterCooldownTimer = _thrusterCooldownDuration;
+        _cameraShake = GameObject.Find("Main Camera").GetComponent<CameraShake>();
 
         if (_spawnManager == null)
         {
@@ -92,6 +95,11 @@ public class Player : MonoBehaviour
         if (_audioSource == null)
         {
             Debug.LogError("Audio Source on the player is NULL.");
+        }
+
+        if (_cameraShake == null)
+        {
+            Debug.LogError("Camera on Player is NULL");
         }
     }
 
@@ -147,24 +155,24 @@ public class Player : MonoBehaviour
 
     void FireLaser()
     {
-        if (_ammoCount > 0 && _laserOnCooldown == false)
+        if (_ammoCount <= 0 || _laserOnCooldown)
+            return;
+
+        _canFire = Time.time + _fireRate;
+
+        if (_isTripleShotActive && _ammoCount >= 3)
         {
-            _canFire = Time.time + _fireRate;
-
-            if (_isTripleShotActive && _ammoCount >= 3)
-            {
-                Instantiate(_tripleShotPrefab, transform.position, Quaternion.identity);
-                this.SubractAmmo(3);
-            }
-            else if (!_isTripleShotActive)
-            {
-                Instantiate(_laserPrefab, transform.position + new Vector3(0, 1.05f, 0), Quaternion.identity);
-                this.SubractAmmo(1);
-            }
-
-            _audioSource.clip = _laserAudio;
-            _audioSource.Play();
+            Instantiate(_tripleShotPrefab, transform.position, Quaternion.identity);
+            SubtractAmmo(3);
         }
+        else if (!_isTripleShotActive)
+        {
+            Instantiate(_laserPrefab, transform.position + new Vector3(0, 1.05f, 0), Quaternion.identity);
+            SubtractAmmo(1);
+        }
+
+        _audioSource.clip = _laserAudio;
+        _audioSource.Play();
     }
 
     public void Damage()
@@ -189,16 +197,19 @@ public class Player : MonoBehaviour
         if (_lives == 2)
         {
             _rightEngine.SetActive(true);
+            CameraShake();
         }
         else if (_lives == 1)
         {
             _leftEngine.SetActive(true);
+            CameraShake();
         }
 
         _uiManager.UpdateLives(_lives);
 
         if (_lives < 1)
         {
+            CameraShake();
             _spawnManager.OnPlayerDeath();
             Destroy(this.gameObject);
         }
@@ -251,7 +262,7 @@ public class Player : MonoBehaviour
         _uiManager.UpdateScore(_score);
     }
 
-    public void SubractAmmo(int amount)
+    public void SubtractAmmo(int amount)
     {
         _ammoCount -= amount;
         _uiManager.UpdateAmmo(_ammoCount);
@@ -270,6 +281,7 @@ public class Player : MonoBehaviour
         {
             _lives++;
             _uiManager.UpdateLives(_lives);
+
             if (_lives == 2)
             {
                 _leftEngine.SetActive(false);
@@ -349,6 +361,15 @@ public class Player : MonoBehaviour
         {
             _thrusterOnCooldown = false;
             _thrusterCooldownTimer = 0.0f;
+        }
+    }
+
+    private void CameraShake()
+    {
+        if (_cameraShake != null)
+        {
+            Debug.Log("Made it to camera shake");
+            _cameraShake.Shake();
         }
     }
 }

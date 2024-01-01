@@ -1575,6 +1575,7 @@ MonoBehaviour:
   _thrusterBarDecreaseSpeed: 0.75
   _thrusterBarIncreaseSpeed: 0.25
   _thrusterCooldownDuration: 3
+  _thrusterCooldownTimer: 0
   _laserPrefab: {fileID: 4977517948103785501, guid: 5eed94b2dd4d66c4491f451a20880c01,
     type: 3}
   _multishotPrefab: {fileID: 853076114794976927, guid: 8ed2bfb2465598e4e8917ec42245eba1,
@@ -2304,6 +2305,7 @@ GameObject:
   - component: {fileID: 1913850334}
   - component: {fileID: 1913850333}
   - component: {fileID: 1913850336}
+  - component: {fileID: 1913850337}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -2436,6 +2438,20 @@ MonoBehaviour:
   m_BeforeTransparentBundles: []
   m_BeforeStackBundles: []
   m_AfterStackBundles: []
+--- !u!114 &1913850337
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1913850332}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3c9bae4ff43bbe046b1a1ea3c249d5f5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _shakeDuration: 0.5
+  _shakeMagnitude: 0.1
 --- !u!1001 &2007487543
 PrefabInstance:
   m_ObjectHideFlags: 0
