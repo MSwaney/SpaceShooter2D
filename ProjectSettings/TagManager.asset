@@ -6,6 +6,9 @@ TagManager:
   tags:
   - Enemy
   - Laser
+  - BigStar
+  - LittleStar
+  - Nebula
   layers:
   - Default
   - TransparentFX

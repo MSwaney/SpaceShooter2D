@@ -368,7 +368,6 @@ public class Player : MonoBehaviour
     {
         if (_cameraShake != null)
         {
-            Debug.Log("Made it to camera shake");
             _cameraShake.Shake();
         }
     }

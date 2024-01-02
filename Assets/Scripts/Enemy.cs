@@ -21,12 +21,17 @@ public class Enemy : MonoBehaviour
         
         if ( _player == null )
         {
-            Debug.LogError("Player is NULL.");
+            Debug.LogError("Player on Enemy is NULL.");
         }
 
         if ( _animator == null )
         {
-            Debug.LogError("Animator is NULL.");
+            Debug.LogError("Animator on Enemy is NULL.");
+        }
+
+        if (_audioSource == null )
+        {
+            Debug.LogError("Audio Source on Enemy is NULL");
         }
 
         StartCoroutine(FireLaserRoutine());
