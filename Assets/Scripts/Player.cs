@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class Player : MonoBehaviour
 {
-    [SerializeField] 
+    [SerializeField]
     private float _speed = 3.5f;
     [SerializeField]
     private float _currentSpeed;
@@ -25,7 +25,8 @@ public class Player : MonoBehaviour
     private float _thrusterCooldownDuration;
     [SerializeField]
     private float _thrusterCooldownTimer;
-
+    [SerializeField]
+    private float _debuffTimer;
 
     [SerializeField]
     private GameObject _laserPrefab;
@@ -37,7 +38,7 @@ public class Player : MonoBehaviour
     private GameObject _shield;
     [SerializeField]
     private GameObject _leftEngine;
-    [SerializeField] 
+    [SerializeField]
     private GameObject _rightEngine;
     [SerializeField]
     private GameObject _thrusterSlider;
@@ -60,7 +61,7 @@ public class Player : MonoBehaviour
 
     private SpawnManager _spawnManager;
     private UIManager _uiManager;
-    [SerializeField] 
+    [SerializeField]
     private AudioClip _laserAudio;
     private AudioSource _audioSource;
 
@@ -69,6 +70,7 @@ public class Player : MonoBehaviour
     private bool _isShieldActive = false;
     private bool _laserOnCooldown = false;
     private bool _thrusterOnCooldown = false;
+    private bool _canBoost = true;
 
     void Start()
     {
@@ -121,7 +123,7 @@ public class Player : MonoBehaviour
         transform.Translate(Vector3.right * horizontalInput * _currentSpeed * Time.deltaTime);
         transform.Translate(Vector3.up * verticalInput * _currentSpeed * Time.deltaTime);
 
-        if (Input.GetKeyDown(KeyCode.LeftShift) && _thrusterOnCooldown == false)
+        if (Input.GetKeyDown(KeyCode.LeftShift) && _thrusterOnCooldown == false && _canBoost == true)
         {
             _currentSpeed *= _thrusterSpeed;
         }
@@ -313,19 +315,22 @@ public class Player : MonoBehaviour
 
     private void CalculateThrusterBar()
     {
-        if (Input.GetKey(KeyCode.LeftShift) && !_thrusterOnCooldown)
+        if (_canBoost)
         {
-            DecreaseThrusterBar();
-        }
-        else if (_thrusterOnCooldown || (!Input.GetKey(KeyCode.LeftShift) && _thrusterBar.transform.localScale.x < 1.0f))
-        {
-            if (_thrusterOnCooldown)
+            if (Input.GetKey(KeyCode.LeftShift) && !_thrusterOnCooldown)
             {
-                UpdateThrusterCooldown();
+                DecreaseThrusterBar();
             }
-            else
+            else if (_thrusterOnCooldown || (!Input.GetKey(KeyCode.LeftShift) && _thrusterBar.transform.localScale.x < 1.0f))
             {
-                IncreaseThrusterBar();
+                if (_thrusterOnCooldown)
+                {
+                    UpdateThrusterCooldown();
+                }
+                else
+                {
+                    IncreaseThrusterBar();
+                }
             }
         }
     }
@@ -370,5 +375,38 @@ public class Player : MonoBehaviour
         {
             _cameraShake.Shake();
         }
+    }
+
+    public void ThrusterDebuff()
+    {
+        _canBoost = false;
+        StartCoroutine(TurnThrusterOffRoutine());
+        StartCoroutine(ShakeThrusterBarRoutine(_duration, _intensity));
+    }
+
+    private IEnumerator TurnThrusterOffRoutine()
+    {
+        _thrusterBar.transform.localScale = new Vector3(0.0f, 1.0f, 1.0f);
+        yield return new WaitForSeconds(_debuffTimer);
+        _canBoost = true;
+    }
+
+    private IEnumerator ShakeThrusterBarRoutine(float duration, float intensity)
+    {
+        Vector3 originalPosition = _thrusterBar.position;
+        float elapsed = 0f;
+
+        while (elapsed < duration)
+        {
+            float x = originalPosition.x + Random.Range(-1f, 1f) * intensity;
+            float y = originalPosition.y + Random.Range(-1f, 1f) * intensity;
+
+            _thrusterBar.position = new Vector3(x, y, originalPosition.z);
+
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        _thrusterBar.transform.position = originalPosition;
     }
 }

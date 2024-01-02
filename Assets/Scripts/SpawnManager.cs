@@ -48,7 +48,6 @@ public class SpawnManager : MonoBehaviour
             if (randomPowerUp == 5)
             {
                 int chance = Random.Range(0, 101);
-                Debug.Log(chance);
                 if (chance % 10  == 0)
                 {
                     Instantiate(_powerups[randomPowerUp], posToSpawn, Quaternion.identity);

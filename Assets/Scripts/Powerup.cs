@@ -6,15 +6,21 @@ public class Powerup : MonoBehaviour
 {
     [SerializeField]
     private float _speed = 3f;
+   
     [SerializeField]
-    private int powerupID; // 0 = Triple shot 1 = Speed 2 = Shields 3 = Ammo 4 = Health 5 = Multishot
-    private AudioSource _audioSource;
+    private int powerupID; // 0 = Triple shot 1 = Speed 2 = Shields 3 = Ammo 4 = Health 5 = Multishot 6 = Thruster Debuff
+
+    private bool _isDebuff = false;
+
+    private AudioSource _pickup;
+    private AudioSource _debuff;
 
     private void Start()
     {
-        _audioSource = GameObject.Find("Pickup").GetComponent<AudioSource>();
+        _pickup = GameObject.Find("Pickup").GetComponent<AudioSource>();
+        _debuff = GameObject.Find("Debuff").GetComponent<AudioSource>();
 
-        if (_audioSource == null )
+        if (_pickup == null || _debuff == null)
         {
             Debug.LogError("Audio Source on Powerup is NULL.");
         }
@@ -58,12 +64,24 @@ public class Powerup : MonoBehaviour
                     case 5:
                         player.FireMultiShot();
                         break;
+                    case 6:
+                        _isDebuff = true;
+                        player.ThrusterDebuff();
+                        break;
                     default:
                         Debug.Log("Default value.");
                         break;
                 }
             }
-            _audioSource.Play();
+            if (_isDebuff == false)
+            {
+                _pickup.Play();
+            }
+            else
+            {
+                _debuff.Play();
+                _isDebuff = false;
+            }
             Destroy(this.gameObject);
         }
     }

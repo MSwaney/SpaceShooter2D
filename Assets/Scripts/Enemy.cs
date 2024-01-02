@@ -39,6 +39,11 @@ public class Enemy : MonoBehaviour
 
     void Update()
     {
+        CalculateMovement();
+    }
+
+    private void CalculateMovement()
+    {
         transform.Translate(Vector3.down * _speed * Time.deltaTime);
 
         if (transform.position.y < -8f)
