@@ -10,12 +10,15 @@ public class SpawnManager : MonoBehaviour
     private GameObject _enemyContainer;
     [SerializeField]
     private GameObject[] _powerups;
+    private GameObject _powerup;
 
     private bool _stopSpawning = false;
 
+    private int _rarity;
+
     void Start()
     {
-        
+        //_rarity = GetComponent<Powerup>().ReturnRarity();
     }
 
     public void StartSpawning()
@@ -40,23 +43,40 @@ public class SpawnManager : MonoBehaviour
     IEnumerator SpawnPowerupRoutine()
     {
         yield return new WaitForSeconds(3.0f);
+
         while (_stopSpawning == false)
         {
-            int powerupID = Random.Range(0, _powerups.Length);
-            Vector3 posToSpawn = new Vector3(Random.Range(-14.5f, 14.5f), 11, 0);
-            int randomPowerUp = Random.Range(0, _powerups.Length);
-            if (randomPowerUp == 5)
+            int totalRarity = 0;
+
+            // Calculate total rarity to determine weight
+            foreach (var powerup in _powerups)
             {
-                int chance = Random.Range(0, 101);
-                if (chance % 10  == 0)
-                {
-                    Instantiate(_powerups[randomPowerUp], posToSpawn, Quaternion.identity);
-                }
-            } 
-            else
-            {
-                Instantiate(_powerups[randomPowerUp], posToSpawn, Quaternion.identity);
+                totalRarity += powerup.GetComponent<Powerup>().ReturnRarity();
             }
+
+            int randomWeight = Random.Range(0, totalRarity);
+            int accumulatedWeight = 0;
+            GameObject selectedPowerup = null;
+
+            // Select a power-up based on weighted random selection
+            foreach (var powerup in _powerups)
+            {
+                int rarity = powerup.GetComponent<Powerup>().ReturnRarity();
+                accumulatedWeight += rarity;
+
+                if (randomWeight < accumulatedWeight)
+                {
+                    selectedPowerup = powerup;
+                    break;
+                }
+            }
+
+            if (selectedPowerup != null)
+            {
+                Vector3 posToSpawn = new Vector3(Random.Range(-14.5f, 14.5f), 11, 0);
+                Instantiate(selectedPowerup, posToSpawn, Quaternion.identity);
+            }
+
             yield return new WaitForSeconds(Random.Range(3f, 8f));
         }
     }

@@ -7,6 +7,7 @@ public class Laser : MonoBehaviour
     [SerializeField]
     private float _speed = 8f;
     private bool _isEnemyLaser;
+    private bool _fireUp = false;
     [SerializeField]
     private float _enemyLaserSpeed;
 
@@ -35,7 +36,7 @@ public class Laser : MonoBehaviour
 
     public void CalculateMovement()
     {
-        if (_isEnemyLaser)
+        if (_isEnemyLaser && !_fireUp)
         {
             transform.Translate(Vector3.down * _speed* _enemyLaserSpeed * Time.deltaTime);
         }
@@ -55,6 +56,11 @@ public class Laser : MonoBehaviour
         return _isEnemyLaser;
     }
 
+    public void FireUp()
+    {
+        _fireUp = true;
+    }
+
     public void OnTriggerEnter2D(Collider2D other)
     {
         if (_isEnemyLaser)
@@ -66,6 +72,14 @@ public class Laser : MonoBehaviour
                 {
                     player.Damage();
                     Destroy(this.gameObject);
+                }
+            }
+            else if (other.tag == "Powerup")
+            {
+                Powerup powerup = other.GetComponent<Powerup>();
+                if (powerup != null)
+                {
+                    powerup.PowerupDestroy();
                 }
             }
         }

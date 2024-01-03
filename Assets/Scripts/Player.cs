@@ -157,6 +157,7 @@ public class Player : MonoBehaviour
 
     void FireLaser()
     {
+        _audioSource.clip = _laserAudio;
         if (_ammoCount <= 0 || _laserOnCooldown)
             return;
 
@@ -166,15 +167,17 @@ public class Player : MonoBehaviour
         {
             Instantiate(_tripleShotPrefab, transform.position, Quaternion.identity);
             SubtractAmmo(3);
+            _audioSource.Play();
         }
         else if (!_isTripleShotActive)
         {
             Instantiate(_laserPrefab, transform.position + new Vector3(0, 1.05f, 0), Quaternion.identity);
             SubtractAmmo(1);
+            _audioSource.Play();
         }
 
-        _audioSource.clip = _laserAudio;
-        _audioSource.Play();
+        
+        
     }
 
     public void Damage()
@@ -381,7 +384,6 @@ public class Player : MonoBehaviour
     {
         _canBoost = false;
         StartCoroutine(TurnThrusterOffRoutine());
-        StartCoroutine(ShakeThrusterBarRoutine(_duration, _intensity));
     }
 
     private IEnumerator TurnThrusterOffRoutine()
@@ -389,24 +391,5 @@ public class Player : MonoBehaviour
         _thrusterBar.transform.localScale = new Vector3(0.0f, 1.0f, 1.0f);
         yield return new WaitForSeconds(_debuffTimer);
         _canBoost = true;
-    }
-
-    private IEnumerator ShakeThrusterBarRoutine(float duration, float intensity)
-    {
-        Vector3 originalPosition = _thrusterBar.position;
-        float elapsed = 0f;
-
-        while (elapsed < duration)
-        {
-            float x = originalPosition.x + Random.Range(-1f, 1f) * intensity;
-            float y = originalPosition.y + Random.Range(-1f, 1f) * intensity;
-
-            _thrusterBar.position = new Vector3(x, y, originalPosition.z);
-
-            elapsed += Time.deltaTime;
-            yield return null;
-        }
-
-        _thrusterBar.transform.position = originalPosition;
     }
 }

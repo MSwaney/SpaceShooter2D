@@ -99,7 +99,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _speed: 2
   powerupID: 6
-  _isDebuff: 1
+  _rarity: 6
 --- !u!50 &6546775422994547986
 Rigidbody2D:
   serializedVersion: 4

@@ -9,6 +9,8 @@ public class Powerup : MonoBehaviour
    
     [SerializeField]
     private int powerupID; // 0 = Triple shot 1 = Speed 2 = Shields 3 = Ammo 4 = Health 5 = Multishot 6 = Thruster Debuff
+    [SerializeField]
+    private int _rarity;
 
     private bool _isDebuff = false;
 
@@ -35,6 +37,11 @@ public class Powerup : MonoBehaviour
             Destroy(this.gameObject);
         }
 
+    }
+
+    public int ReturnRarity()
+    {
+        return _rarity;
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -82,7 +89,12 @@ public class Powerup : MonoBehaviour
                 _debuff.Play();
                 _isDebuff = false;
             }
-            Destroy(this.gameObject);
+            PowerupDestroy();
         }
+    }
+
+    public void PowerupDestroy()
+    {
+        Destroy(this.gameObject);
     }
 }

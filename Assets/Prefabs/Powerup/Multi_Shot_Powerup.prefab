@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 8438902528630047023}
   m_Layer: 0
   m_Name: Multi_Shot_Powerup
-  m_TagString: Untagged
+  m_TagString: Powerup
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -99,6 +99,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _speed: 3
   powerupID: 5
+  _rarity: 1
 --- !u!50 &4262649840885657035
 Rigidbody2D:
   serializedVersion: 4

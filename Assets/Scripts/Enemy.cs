@@ -87,10 +87,36 @@ public class Enemy : MonoBehaviour
             yield return new WaitForSeconds(Random.Range(1f, 4f));
             if (!_isDead)
             {
-                GameObject laser = Instantiate(_laserPrefab, transform.position + new Vector3(0, -1.59f, 0), Quaternion.identity);
-                laser.GetComponent<Laser>().AssignEnemyLaser();
+                GameObject player = GameObject.Find("Player");
+                GameObject powerup = GameObject.FindGameObjectWithTag("Powerup");
+                if (player.transform.position.y > transform.position.y)
+                {
+                    GameObject laser = Instantiate(_laserPrefab, transform.position + new Vector3(0, -1.59f, 0), Quaternion.identity);
+                    laser.GetComponent<Laser>().AssignEnemyLaser();
+                    laser.GetComponent<Laser>().FireUp();
+                }
+                else
+                {
+                    GameObject laser = Instantiate(_laserPrefab, transform.position + new Vector3(0, -1.59f, 0), Quaternion.identity);
+                    laser.GetComponent<Laser>().AssignEnemyLaser();
+                }
+
+                if (powerup != null)
+                {
+                    if (powerup.tag == "Powerup")
+                    {
+                        GameObject laser = Instantiate(_laserPrefab, transform.position + new Vector3(0, -1.59f, 0), Quaternion.identity);
+                        laser.GetComponent<Laser>().AssignEnemyLaser();
+                    }
+                }
             }
         }
+    }
+
+    private void FireLaser()
+    {
+        GameObject laser = Instantiate(_laserPrefab, transform.position + new Vector3(0, -1.59f, 0), Quaternion.identity);
+        laser.GetComponent<Laser>().AssignEnemyLaser();
     }
 
     private void DestroyEnemy()
