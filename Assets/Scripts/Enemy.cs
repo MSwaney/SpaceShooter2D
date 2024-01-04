@@ -6,11 +6,17 @@ public class Enemy : MonoBehaviour
 {
     [SerializeField]
     private float _speed = 4.0f;
+    [SerializeField]
+    private float _zigzagAmplitude;
+    [SerializeField]
+    private float _zigzagSpeed;
+
     private Player _player;
     private Animator _animator;
     private AudioSource _audioSource;
     [SerializeField]
     private GameObject _laserPrefab;
+
     private bool _isDead = false;
 
     void Start()
@@ -18,7 +24,7 @@ public class Enemy : MonoBehaviour
         _player = GameObject.Find("Player").GetComponent<Player>();
         _animator = GetComponent<Animator>();
         _audioSource = GetComponent<AudioSource>();
-        
+
         if ( _player == null )
         {
             Debug.LogError("Player on Enemy is NULL.");
@@ -44,13 +50,18 @@ public class Enemy : MonoBehaviour
 
     private void CalculateMovement()
     {
+        float zigzagX = Mathf.PingPong(Time.time * _zigzagSpeed, _zigzagAmplitude * 2) - _zigzagAmplitude;
+
         transform.Translate(Vector3.down * _speed * Time.deltaTime);
+        transform.Translate(new Vector3(zigzagX, 0, 0) * Time.deltaTime);
 
         if (transform.position.y < -8f)
         {
             float randomX = Random.Range(-15.5f, 15.5f);
             transform.position = new Vector3(randomX, 11f, 0f);
         }
+
+        transform.position = new Vector3(Mathf.Clamp(transform.position.x, -15.5f, 15f), transform.position.y, transform.position.z);
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -111,12 +122,6 @@ public class Enemy : MonoBehaviour
                 }
             }
         }
-    }
-
-    private void FireLaser()
-    {
-        GameObject laser = Instantiate(_laserPrefab, transform.position + new Vector3(0, -1.59f, 0), Quaternion.identity);
-        laser.GetComponent<Laser>().AssignEnemyLaser();
     }
 
     private void DestroyEnemy()
