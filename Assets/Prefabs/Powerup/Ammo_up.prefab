@@ -136,4 +136,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _speed: 3
   powerupID: 3
-  _rarity: 10
+  _rarity: 12
