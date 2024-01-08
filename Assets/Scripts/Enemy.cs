@@ -50,18 +50,36 @@ public class Enemy : MonoBehaviour
 
     private void CalculateMovement()
     {
-        float zigzagX = Mathf.PingPong(Time.time * _zigzagSpeed, _zigzagAmplitude * 2) - _zigzagAmplitude;
-
-        transform.Translate(Vector3.down * _speed * Time.deltaTime);
-        transform.Translate(new Vector3(zigzagX, 0, 0) * Time.deltaTime);
-
-        if (transform.position.y < -8f)
+        if (tag == "Enemy")
         {
-            float randomX = Random.Range(-15.5f, 15.5f);
-            transform.position = new Vector3(randomX, 11f, 0f);
-        }
+            float zigzagX = Mathf.PingPong(Time.time * _zigzagSpeed, _zigzagAmplitude * 2) - _zigzagAmplitude;
 
-        transform.position = new Vector3(Mathf.Clamp(transform.position.x, -15.5f, 15f), transform.position.y, transform.position.z);
+            transform.Translate(Vector3.down * _speed * Time.deltaTime);
+            transform.Translate(new Vector3(zigzagX, 0, 0) * Time.deltaTime);
+
+            if (transform.position.y < -8f)
+            {
+                float randomX = Random.Range(-15.5f, 15.5f);
+                transform.position = new Vector3(randomX, 11f, 0f);
+            }
+
+            transform.position = new Vector3(Mathf.Clamp(transform.position.x, -15.5f, 15f), transform.position.y, transform.position.z);
+        }
+        else if (tag == "Enemy2")
+        {
+            float zigzagY = Mathf.PingPong(Time.time * _zigzagSpeed, _zigzagAmplitude * 2) - _zigzagAmplitude;
+            
+            transform.Translate(Vector3.right * _speed * Time.deltaTime);
+            transform.Translate(new Vector3(0, zigzagY, 0) * Time.deltaTime);
+
+            if (transform.position.x > 17.2)
+            {
+                float randomY = Random.Range(2f, 6.5f);
+                transform.position = new Vector3(-17.2f, randomY, 0f);
+            }
+
+            transform.position = new Vector3(transform.position.x, Mathf.Clamp(transform.position.y, 2f, 6.5f), transform.position.z);
+        }
     }
 
     private void OnTriggerEnter2D(Collider2D other)

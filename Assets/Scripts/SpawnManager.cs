@@ -4,18 +4,16 @@ using UnityEngine;
 
 public class SpawnManager : MonoBehaviour
 {
-    [SerializeField]
-    private GameObject _enemyPrefab;
-    [SerializeField]
-    private GameObject _enemyContainer;
-    [SerializeField]
-    private GameObject[] _powerups;
-    private GameObject _powerup;
+    [SerializeField] private GameObject _enemyPrefab;
+    [SerializeField] private GameObject _enemy2Prefab;
+    [SerializeField] private GameObject _enemyContainer;
+    [SerializeField] private GameObject[] _powerups;
+                     private GameObject _powerup;
+                     
+                     private bool _stopSpawning = false;
 
-    private bool _stopSpawning = false;
-
-    private int _rarity;
-
+                     private int _rarity;
+                     private int _currentWave = 0;
     void Start()
     {
         //_rarity = GetComponent<Powerup>().ReturnRarity();
@@ -23,14 +21,70 @@ public class SpawnManager : MonoBehaviour
 
     public void StartSpawning()
     {
-        StartCoroutine(SpawnEnemyRoutine());
+        StartCoroutine(WaveRoutine());
+        //StartCoroutine(SpawnEnemyRoutine());
         StartCoroutine(SpawnPowerupRoutine());
+        //StartCoroutine(SpawnEnemy2Routine());
     }
 
-    IEnumerator SpawnEnemyRoutine()
+    IEnumerator WaveRoutine()
+    {
+        while (_stopSpawning == false)
+        {
+            yield return StartCoroutine(SpawnEnemyWave(_currentWave));
+            //yield return StartCoroutine(SpawnEnemy2Wave(_currentWave));
+
+            yield return new WaitForSeconds(3f);
+
+            _currentWave++;
+        }
+    }
+
+    private IEnumerator SpawnEnemyWave(int waveNumber)
+    {
+        for (int i = 0; i < waveNumber + 1; i++)
+        {
+            float enemyPrefabToSpawn = Random.Range(0f, 1f);
+            Debug.Log(enemyPrefabToSpawn);
+            if (enemyPrefabToSpawn > 0.3)
+            {
+                Vector3 posToSpawn = new Vector3(Random.Range(-14.5f, 14.5f), 11, 0);
+                GameObject newEnemy = Instantiate(_enemyPrefab, posToSpawn, Quaternion.identity);
+                newEnemy.transform.parent = _enemyContainer.transform;
+            }
+            else
+            {
+                Vector3 posToSpawn = new Vector3(-16.7f, Random.Range(2.0f, 6.5f), 0);
+                GameObject newEnemy = Instantiate(_enemy2Prefab, posToSpawn, Quaternion.identity);
+                newEnemy.transform.parent = _enemyContainer.transform;
+            }
+        }
+
+        while (GameObject.FindWithTag("Enemy") != null)
+        {
+            yield return null;
+        }
+    }
+
+    //private IEnumerator SpawnEnemy2Wave(int waveNumber)
+    //{
+    //    for (int i = 0; i < waveNumber + 1; i++)
+    //    {
+    //        Vector3 posToSpawn = new Vector3(-16.7f, Random.Range(2.0f, 6.5f), 0);
+    //        GameObject newEnemy = Instantiate(_enemy2Prefab, posToSpawn, Quaternion.identity);
+    //        newEnemy.transform.parent = _enemyContainer.transform;
+    //    }
+
+    //    while (GameObject.FindWithTag("Enemy2") != null)
+    //    {
+    //        yield return null;
+    //    }
+    //}
+
+    /*IEnumerator SpawnEnemyRoutine()
     {
         yield return new WaitForSeconds(3.0f);
-        
+
         while (_stopSpawning == false)
         {
             Vector3 posToSpawn = new Vector3(Random.Range(-14.5f, 14.5f), 11, 0);
@@ -39,6 +93,19 @@ public class SpawnManager : MonoBehaviour
             yield return new WaitForSeconds(5.0f);
         }
     }
+
+    IEnumerator SpawnEnemy2Routine()
+    {
+        yield return new WaitForSeconds(10.0f);
+
+        while (_stopSpawning == false)
+        {
+            Vector3 posToSpawn = new Vector3(-16.7f, Random.Range(2.0f, 6.5f), 0);
+            GameObject newEnemy = Instantiate(_enemy2Prefab, posToSpawn, Quaternion.identity);
+            newEnemy.transform.parent = _enemyContainer.transform;
+            yield return new WaitForSeconds(8.0f);
+        }
+    }*/
 
     IEnumerator SpawnPowerupRoutine()
     {
