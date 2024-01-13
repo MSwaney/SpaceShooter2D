@@ -14,13 +14,25 @@ public class Enemy : MonoBehaviour
     private Player _player;
     private Animator _animator;
     private AudioSource _audioSource;
+
     [SerializeField]
     private GameObject _laserPrefab;
+    [SerializeField]
+    private GameObject _shield;
 
     private bool _isDead = false;
+    private bool _isShieldActive = false;
 
     void Start()
     {
+        int shieldChance = Random.Range(1, 100);
+        if (shieldChance % 20 == 0 )
+        {
+            _isShieldActive = true;
+            _shield.SetActive(true);
+            _shield.GetComponent<SpriteRenderer>().material.color = new Color(1.0f, 1.0f, 1.0f, 0.5f);
+        }
+
         _player = GameObject.Find("Player").GetComponent<Player>();
         _animator = GetComponent<Animator>();
         _audioSource = GetComponent<AudioSource>();
@@ -144,6 +156,12 @@ public class Enemy : MonoBehaviour
 
     private void DestroyEnemy()
     {
+        if (_isShieldActive == true)
+        {
+            _shield.SetActive(false);
+            _isShieldActive = false;
+            return;
+        }
         _animator.SetTrigger("OnEnemyDeath");
         _speed = 0f;
         _audioSource.Play();
