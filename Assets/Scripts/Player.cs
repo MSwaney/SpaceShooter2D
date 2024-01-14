@@ -6,71 +6,51 @@ using UnityEngine.UI;
 
 public class Player : MonoBehaviour
 {
-    [SerializeField]
-    private float _speed = 3.5f;
-    [SerializeField]
-    private float _currentSpeed;
-    [SerializeField]
-    private float _speedMultiplier = 2f;
-    [SerializeField]
-    private float _fireRate = 0.5f;
-    private float _canFire = -1f;
-    [SerializeField]
-    private float _thrusterSpeed;
-    [SerializeField]
-    private float _thrusterBarDecreaseSpeed;
-    [SerializeField]
-    private float _thrusterBarIncreaseSpeed;
-    [SerializeField]
-    private float _thrusterCooldownDuration;
-    [SerializeField]
-    private float _thrusterCooldownTimer;
-    [SerializeField]
-    private float _debuffTimer;
+                     private bool _isTripleShotActive = false;
+                     private bool _isSpeedBoostActive = false;
+                     private bool _isShieldActive = false;
+                     private bool _laserOnCooldown = false;
+                     private bool _thrusterOnCooldown = false;
+                     private bool _canBoost = true;
 
-    [SerializeField]
-    private GameObject _laserPrefab;
-    [SerializeField]
-    private GameObject _multishotPrefab;
-    [SerializeField]
-    private GameObject _tripleShotPrefab;
-    [SerializeField]
-    private GameObject _shield;
-    [SerializeField]
-    private GameObject _leftEngine;
-    [SerializeField]
-    private GameObject _rightEngine;
-    [SerializeField]
-    private GameObject _thrusterSlider;
-    [SerializeField]
-    private Transform _thrusterBar;
-    [SerializeField]
-    private Color _shieldTransparency;
-    private CameraShake _cameraShake;
+    [SerializeField] private float _currentSpeed;
+    [SerializeField] private float _debuffTimer;
+    [SerializeField] private float _fireRate = 0.5f;
+    [SerializeField] private float _speed = 3.5f;
+    [SerializeField] private float _speedMultiplier = 2f;
+    [SerializeField] private float _thrusterSpeed;
+    [SerializeField] private float _thrusterBarDecreaseSpeed;
+    [SerializeField] private float _thrusterBarIncreaseSpeed;
+    [SerializeField] private float _thrusterCooldownDuration;
+    [SerializeField] private float _thrusterCooldownTimer;
+    [SerializeField] private float _tractorBeamSliderSpeed;
+    [SerializeField] private float _tractorBeamSpeed;
+                     private float _canFire = -1f;
+                     private float _tractorBeamSliderValue;
 
+    [SerializeField] private GameObject _laserPrefab;
+    [SerializeField] private GameObject _leftEngine;
+    [SerializeField] private GameObject _multishotPrefab;
+    [SerializeField] private GameObject _rightEngine;
+    [SerializeField] private GameObject _shield;
+    [SerializeField] private GameObject _thrusterSlider;
+    [SerializeField] private GameObject _tractorBeamSlider;
+    [SerializeField] private GameObject _tripleShotPrefab;
 
-    [SerializeField]
-    private int _lives = 3;
-    [SerializeField]
-    private int _score;
-    private int _shieldLives = 1;
-    [SerializeField]
-    private int _ammoCount;
-    [SerializeField]
-    private int _numberOfMultiShotLasers;
+    [SerializeField] private int _ammoCount;
+    [SerializeField] private int _lives = 3;
+    [SerializeField] private int _numberOfMultiShotLasers;
+    [SerializeField] private int _score;
+                     private int _shieldLives = 1;
 
-    private SpawnManager _spawnManager;
-    private UIManager _uiManager;
-    [SerializeField]
-    private AudioClip _laserAudio;
-    private AudioSource _audioSource;
+    [SerializeField] private AudioClip _laserAudio;
+    [SerializeField] private Color      _shieldTransparency;
+    [SerializeField] private Transform  _thrusterBar;
+                     private AudioSource _audioSource;
+                     private SpawnManager _spawnManager;
+                     private UIManager _uiManager;
+                     private CameraShake _cameraShake;
 
-    private bool _isTripleShotActive = false;
-    private bool _isSpeedBoostActive = false;
-    private bool _isShieldActive = false;
-    private bool _laserOnCooldown = false;
-    private bool _thrusterOnCooldown = false;
-    private bool _canBoost = true;
 
     void Start()
     {
@@ -83,6 +63,7 @@ public class Player : MonoBehaviour
         _thrusterBar = _thrusterSlider.transform.GetChild(1);
         _thrusterCooldownTimer = _thrusterCooldownDuration;
         _cameraShake = GameObject.Find("Main Camera").GetComponent<CameraShake>();
+        _tractorBeamSliderValue = _tractorBeamSlider.GetComponent<Slider>().value;
 
         if (_spawnManager == null)
         {
@@ -113,6 +94,16 @@ public class Player : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space) && Time.time > _canFire)
         {
             FireLaser();
+        }
+
+        if (Input.GetKey(KeyCode.C)&& _uiManager.CanTractorBeam()) 
+        {
+            _uiManager.UpdateTractorBeamSlider();
+            PullPowerup();           
+        }
+        else if (!Input.GetKey(KeyCode.C))
+        {
+            _uiManager.TractorBeamSliderRefill();
         }
     }
 
@@ -391,5 +382,22 @@ public class Player : MonoBehaviour
         _thrusterBar.transform.localScale = new Vector3(0.0f, 1.0f, 1.0f);
         yield return new WaitForSeconds(_debuffTimer);
         _canBoost = true;
+    }
+
+    private void PullPowerup()
+    {
+        GameObject[] powerups = GameObject.FindGameObjectsWithTag("Powerup");
+        
+        foreach (GameObject powerup in powerups)
+        {
+            if (powerup.transform.position.x < this.transform.position.x)
+            {
+                powerup.transform.Translate(Vector3.right * _tractorBeamSpeed * Time.deltaTime);
+            }
+            else if (powerup.transform.position.x > this.transform.position.x) 
+            {
+                powerup.transform.Translate(Vector3.left * _tractorBeamSpeed * Time.deltaTime);
+            }
+        }
     }
 }

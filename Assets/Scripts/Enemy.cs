@@ -26,7 +26,7 @@ public class Enemy : MonoBehaviour
     void Start()
     {
         int shieldChance = Random.Range(1, 100);
-        if (shieldChance % 20 == 0 )
+        if (shieldChance % 20 == 0)
         {
             _isShieldActive = true;
             _shield.SetActive(true);
@@ -37,17 +37,17 @@ public class Enemy : MonoBehaviour
         _animator = GetComponent<Animator>();
         _audioSource = GetComponent<AudioSource>();
 
-        if ( _player == null )
+        if (_player == null)
         {
             Debug.LogError("Player on Enemy is NULL.");
         }
 
-        if ( _animator == null )
+        if (_animator == null)
         {
             Debug.LogError("Animator on Enemy is NULL.");
         }
 
-        if (_audioSource == null )
+        if (_audioSource == null)
         {
             Debug.LogError("Audio Source on Enemy is NULL");
         }
@@ -80,7 +80,7 @@ public class Enemy : MonoBehaviour
         else if (tag == "Enemy2")
         {
             float zigzagY = Mathf.PingPong(Time.time * _zigzagSpeed, _zigzagAmplitude * 2) - _zigzagAmplitude;
-            
+
             transform.Translate(Vector3.right * _speed * Time.deltaTime);
             transform.Translate(new Vector3(0, zigzagY, 0) * Time.deltaTime);
 
@@ -142,13 +142,9 @@ public class Enemy : MonoBehaviour
                     laser.GetComponent<Laser>().AssignEnemyLaser();
                 }
 
-                if (powerup != null)
+                if (powerup != null && IsPowerupBeneath(powerup))
                 {
-                    if (powerup.tag == "Powerup")
-                    {
-                        GameObject laser = Instantiate(_laserPrefab, transform.position + new Vector3(0, -1.59f, 0), Quaternion.identity);
-                        laser.GetComponent<Laser>().AssignEnemyLaser();
-                    }
+                    ShootPowerup(powerup);
                 }
             }
         }
@@ -168,5 +164,24 @@ public class Enemy : MonoBehaviour
         Destroy(GetComponent<Collider2D>());
         _isDead = true;
         Destroy(this.gameObject, 2.8f);
+    }
+
+    private bool IsPowerupBeneath(GameObject powerup)
+    {
+        float detectionThreshold = 5.0f;
+
+        return Mathf.Abs(transform.position.y - powerup.transform.position.y) < detectionThreshold;
+    }
+
+    private void ShootPowerup(GameObject powerup)
+    {
+        if (powerup != null)
+        {
+            if (powerup.tag == "Powerup")
+            {
+                GameObject laser = Instantiate(_laserPrefab, transform.position + new Vector3(0, -1.59f, 0), Quaternion.identity);
+                laser.GetComponent<Laser>().AssignEnemyLaser();
+            }
+        }
     }
 }
