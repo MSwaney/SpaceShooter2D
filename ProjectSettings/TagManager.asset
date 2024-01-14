@@ -10,6 +10,9 @@ TagManager:
   - LittleStar
   - Nebula
   - Powerup
+  - Enemy2
+  - Enemy3
+  - EnemyLaser
   layers:
   - Default
   - TransparentFX

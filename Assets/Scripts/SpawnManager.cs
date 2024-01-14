@@ -6,6 +6,7 @@ public class SpawnManager : MonoBehaviour
 {
     [SerializeField] private GameObject _enemyPrefab;
     [SerializeField] private GameObject _enemy2Prefab;
+    [SerializeField] private GameObject _enemy3Prefab;
     [SerializeField] private GameObject _enemyContainer;
     [SerializeField] private GameObject[] _powerups;
                      private GameObject _powerup;
@@ -47,18 +48,24 @@ public class SpawnManager : MonoBehaviour
 
         for (int i = 0; i < totalEnemies; i++)
         {
-            float enemyPrefabToSpawn = Random.Range(0f, 1f);
+            float enemyPrefabToSpawn = Random.Range(0f, 2f);
 
-            if (enemyPrefabToSpawn > 0.3)
+            if (enemyPrefabToSpawn > 0.8)
             {
                 Vector3 posToSpawn = new Vector3(Random.Range(-14.5f, 14.5f), 11, 0);
                 GameObject newEnemy = Instantiate(_enemyPrefab, posToSpawn, Quaternion.identity);
                 newEnemy.transform.parent = _enemyContainer.transform;
             }
-            else
+            else if (enemyPrefabToSpawn > 0.3)
             {
                 Vector3 posToSpawn = new Vector3(-16.7f, Random.Range(2.0f, 6.5f), 0);
                 GameObject newEnemy = Instantiate(_enemy2Prefab, posToSpawn, Quaternion.identity);
+                newEnemy.transform.parent = _enemyContainer.transform;
+            }
+            else
+            {
+                Vector3 posToSpawn = new Vector3(Random.Range(-14.5f, 14.5f), 11, 0);
+                GameObject newEnemy = Instantiate(_enemy3Prefab, posToSpawn, Quaternion.identity);
                 newEnemy.transform.parent = _enemyContainer.transform;
             }
 

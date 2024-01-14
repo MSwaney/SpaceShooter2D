@@ -4,24 +4,24 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
-    [SerializeField]
-    private float _speed = 4.0f;
-    [SerializeField]
-    private float _zigzagAmplitude;
-    [SerializeField]
-    private float _zigzagSpeed;
+                     private bool _isDead = false;
+                     private bool _isShieldActive = false;
 
-    private Player _player;
-    private Animator _animator;
-    private AudioSource _audioSource;
+    [SerializeField] private float _evasionDistance;
+    [SerializeField] private float _laserDetectionDistance;
+    [SerializeField] private float _ramDistance;
+    [SerializeField] private float _ramSpeed;
+    [SerializeField] private float _speed = 4.0f;
+    [SerializeField] private float _zigzagAmplitude;
+    [SerializeField] private float _zigzagSpeed;
 
-    [SerializeField]
-    private GameObject _laserPrefab;
-    [SerializeField]
-    private GameObject _shield;
+    [SerializeField] private GameObject _laserPrefab;
+    [SerializeField] private GameObject _shield;
 
-    private bool _isDead = false;
-    private bool _isShieldActive = false;
+                     private Animator _animator;
+                     private AudioSource _audioSource;
+                     private Player _player;
+
 
     void Start()
     {
@@ -58,6 +58,9 @@ public class Enemy : MonoBehaviour
     void Update()
     {
         CalculateMovement();
+        CalculateDistanceToPlayer();
+        EvadeShot();
+        
     }
 
     private void CalculateMovement()
@@ -91,6 +94,17 @@ public class Enemy : MonoBehaviour
             }
 
             transform.position = new Vector3(transform.position.x, Mathf.Clamp(transform.position.y, 2f, 6.5f), transform.position.z);
+        }
+        else if (tag == "Enemy3")
+        {
+            transform.Translate(Vector3.down * _speed * Time.deltaTime);
+            if (transform.position.y < -8f)
+            {
+                float randomX = Random.Range(-15.5f, 15.5f);
+                transform.position = new Vector3(randomX, 11f, 0f);
+            }
+
+            transform.position = new Vector3(Mathf.Clamp(transform.position.x, -15.5f, 15f), transform.position.y, transform.position.z);
         }
     }
 
@@ -181,6 +195,61 @@ public class Enemy : MonoBehaviour
             {
                 GameObject laser = Instantiate(_laserPrefab, transform.position + new Vector3(0, -1.59f, 0), Quaternion.identity);
                 laser.GetComponent<Laser>().AssignEnemyLaser();
+            }
+        }
+    }
+
+    private void CalculateDistanceToPlayer()
+    {
+        if (Vector3.Distance(transform.position, _player.transform.position) < _ramDistance)
+        {
+            RamPlayer();
+        }
+    }
+
+    private void RamPlayer()
+    {        
+        if (transform.position.x < _player.transform.position.x)
+        {
+            transform.Translate(Vector3.right * _speed * _ramSpeed * Time.deltaTime);
+        }
+        else if (transform.position.x > _player.transform.position.x)
+        {
+            transform.Translate(Vector3.left * _speed * _ramSpeed * Time.deltaTime);
+        }
+        else if (transform.position.y > _player.transform.position.y)
+        {
+            transform.Translate(Vector3.down * _speed * _ramSpeed * Time.deltaTime);
+        }
+    }
+
+    private void EvadeShot()
+    {
+        if (tag == "Enemy3")
+        {
+            GameObject[] lasers = GameObject.FindGameObjectsWithTag("Laser");
+
+            foreach (GameObject laser in lasers)
+            {
+                if (laser.CompareTag("EnemyLaser"))
+                {
+                    continue;
+                }
+                
+                float distanceToLaser = Vector3.Distance(transform.position, laser.transform.position);
+                
+                if (distanceToLaser < _laserDetectionDistance)
+                {
+                    Debug.Log(_laserDetectionDistance + " -- " + distanceToLaser);
+                    if (transform.position.x < _player.transform.position.x)
+                    {
+                        transform.Translate(Vector3.left * _speed * _evasionDistance * Time.deltaTime);
+                    }
+                    else
+                    {
+                        transform.Translate(Vector3.right * _speed * _evasionDistance * Time.deltaTime);
+                    }
+                }
             }
         }
     }

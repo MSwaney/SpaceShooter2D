@@ -49,6 +49,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1522ffc1e7bb78846a98e9d565754fb4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _ramDistance: 5
+  _ramSpeed: 1.5
   _speed: 4
   _zigzagAmplitude: 2
   _zigzagSpeed: 2

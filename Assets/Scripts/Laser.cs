@@ -53,7 +53,8 @@ public class Laser : MonoBehaviour
 
     public bool IsEnemyLaser()
     {
-        return _isEnemyLaser;
+        this.tag = "EnemyLaser";
+        return _isEnemyLaser;       
     }
 
     public void FireUp()
