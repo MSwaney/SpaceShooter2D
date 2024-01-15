@@ -75,6 +75,9 @@ public class Powerup : MonoBehaviour
                         _isDebuff = true;
                         player.ThrusterDebuff();
                         break;
+                    case 7:
+                        player.AddMissile();
+                        break;
                     default:
                         Debug.Log("Default value.");
                         break;

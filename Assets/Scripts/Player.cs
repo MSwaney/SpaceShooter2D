@@ -30,17 +30,20 @@ public class Player : MonoBehaviour
 
     [SerializeField] private GameObject _laserPrefab;
     [SerializeField] private GameObject _leftEngine;
+    [SerializeField] private GameObject _missilePrefab;
+    [SerializeField] private GameObject _missileUI;
     [SerializeField] private GameObject _multishotPrefab;
     [SerializeField] private GameObject _rightEngine;
     [SerializeField] private GameObject _shield;
     [SerializeField] private GameObject _thrusterSlider;
     [SerializeField] private GameObject _tractorBeamSlider;
     [SerializeField] private GameObject _tripleShotPrefab;
-
+    
     [SerializeField] private int _ammoCount;
     [SerializeField] private int _lives = 3;
     [SerializeField] private int _numberOfMultiShotLasers;
     [SerializeField] private int _score;
+                     private int _numberOfMissiles;
                      private int _shieldLives = 1;
 
     [SerializeField] private AudioClip _laserAudio;
@@ -94,6 +97,11 @@ public class Player : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space) && Time.time > _canFire)
         {
             FireLaser();
+        }
+
+        if (Input.GetKeyDown(KeyCode.B) && _numberOfMissiles != 0)
+        {
+            FireMissile();
         }
 
         if (Input.GetKey(KeyCode.C)&& _uiManager.CanTractorBeam()) 
@@ -399,5 +407,59 @@ public class Player : MonoBehaviour
                 powerup.transform.Translate(Vector3.left * _tractorBeamSpeed * Time.deltaTime);
             }
         }
+    }
+
+    public void AddMissile()
+    {
+        if (_numberOfMissiles == 0)
+        {
+            _missileUI.transform.GetChild(0).gameObject.SetActive(true);
+            _numberOfMissiles++;
+        } 
+        else if (_numberOfMissiles == 1)
+        {
+            _missileUI.transform.GetChild(1).gameObject.SetActive(true);
+            _numberOfMissiles++;
+        }
+        else if ( _numberOfMissiles == 2)
+        {
+            _missileUI.transform.GetChild(2).gameObject.SetActive(true);
+            _numberOfMissiles++;
+        }
+        else
+        {
+            return;
+        }
+        
+    }
+
+    public void SubtractMissile()
+    {
+        _numberOfMissiles--;
+    }
+
+    private void FireMissile()
+    {
+        if (_numberOfMissiles == 0)
+        {
+            return;
+        }
+        else if (_numberOfMissiles == 3)
+        {
+            _missileUI.transform.GetChild(2).gameObject.SetActive(false);
+            SubtractMissile();
+        }
+        else if ( _numberOfMissiles == 2)
+        {
+            _missileUI.transform.GetChild(1).gameObject.SetActive(false);
+            SubtractMissile();
+        }
+        else
+        {
+            _missileUI.transform.GetChild(0).gameObject.SetActive(false);
+            SubtractMissile();
+        }
+
+        Instantiate(_missilePrefab, transform.position + new Vector3(0, 1.87f, 0), Quaternion.identity);
     }
 }

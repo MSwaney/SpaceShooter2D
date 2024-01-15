@@ -48,12 +48,12 @@ public class Laser : MonoBehaviour
 
     public void AssignEnemyLaser()
     {
+        this.tag = "EnemyLaser";
         _isEnemyLaser = true;
     }
 
     public bool IsEnemyLaser()
     {
-        this.tag = "EnemyLaser";
         return _isEnemyLaser;       
     }
 

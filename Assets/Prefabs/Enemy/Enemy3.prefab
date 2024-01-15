@@ -99,7 +99,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _evasionDistance: 0.75
-  _laserDetectionDistance: 2
+  _laserDetectionDistance: 4
   _ramDistance: 0
   _ramSpeed: 0
   _speed: 8
