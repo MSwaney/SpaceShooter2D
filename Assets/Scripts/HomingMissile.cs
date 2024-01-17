@@ -2,17 +2,23 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
 public class HomingMissile : MonoBehaviour
 {
-    private Player _player;
+    [SerializeField] private float _speed;
+    [SerializeField] private float _angleChangingSpeed;
 
-    // Start is called before the first frame update
+                     private GameObject _closestEnemy;
+                     
+    [SerializeField] private Rigidbody2D _rigidBody;
+                     private Player _player;
+
     void Start()
     {
         _player = GameObject.Find("Player").GetComponent<Player>();
+        _closestEnemy = CalculateClosestEnemy();
     }
 
-    // Update is called once per frame
     void Update()
     {
         CalculateMovement();
@@ -20,12 +26,23 @@ public class HomingMissile : MonoBehaviour
 
     private void CalculateMovement()
     {
+        if (_closestEnemy != null)
+        {
+            Vector2 direction = (Vector2)_closestEnemy.transform.position - _rigidBody.position;
+            direction.Normalize();
+            float rotateAmount = Vector3.Cross(direction, transform.up).z;
+            _rigidBody.angularVelocity = -_angleChangingSpeed * rotateAmount;
+            _rigidBody.velocity = transform.up * _speed;
+        }
+    }
+
+    private GameObject CalculateClosestEnemy()
+    {
         GameObject[] enemies1 = GameObject.FindGameObjectsWithTag("Enemy");
         GameObject[] enemies2 = GameObject.FindGameObjectsWithTag("Enemy2");
         GameObject[] enemies3 = GameObject.FindGameObjectsWithTag("Enemy3");
 
         Transform playerTransform = _player.transform;
-        GameObject closestEnemy = null;
         float closestDistance = float.MaxValue;
 
         foreach (GameObject enemy in enemies1)
@@ -34,7 +51,7 @@ public class HomingMissile : MonoBehaviour
             if (distance < closestDistance)
             {
                 closestDistance = distance;
-                closestEnemy = enemy;
+                _closestEnemy = enemy;
             }
         }
 
@@ -44,7 +61,7 @@ public class HomingMissile : MonoBehaviour
             if (distance < closestDistance)
             {
                 closestDistance = distance;
-                closestEnemy = enemy;
+                _closestEnemy = enemy;
             }
         }
 
@@ -54,13 +71,10 @@ public class HomingMissile : MonoBehaviour
             if (distance < closestDistance)
             {
                 closestDistance = distance;
-                closestEnemy = enemy;
+                _closestEnemy = enemy;
             }
         }
 
-        if (closestEnemy != null)
-        {
-            Debug.Log(closestEnemy.ToString());
-        }
+        return _closestEnemy;
     }
 }

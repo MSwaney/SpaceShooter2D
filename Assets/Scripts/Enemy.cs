@@ -133,6 +133,20 @@ public class Enemy : MonoBehaviour
                 Destroy(other.gameObject);
             }
         }
+
+        if (other.tag == "Missile")
+        {
+            HomingMissile missile = other.GetComponent<HomingMissile>();
+            if (missile != null)
+            {
+                if (_player != null)
+                {
+                    _player.AddToScore(10);
+                }
+                DestroyEnemy();
+                Destroy(other.gameObject);
+            }
+        }
     }
 
     IEnumerator FireLaserRoutine()
