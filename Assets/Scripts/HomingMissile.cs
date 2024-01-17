@@ -22,6 +22,23 @@ public class HomingMissile : MonoBehaviour
     void Update()
     {
         CalculateMovement();
+
+        if (transform.position.y > 11.0f || transform.position.y < -8f)
+        {
+            if (transform.parent != null)
+            {
+                Destroy(transform.parent.gameObject);
+            }
+            Destroy(this.gameObject);
+        }
+        else if (transform.position.x > 16.5f || transform.position.x < -16.5f)
+        {
+            if (transform.parent != null)
+            {
+                Destroy(transform.parent.gameObject);
+            }
+            Destroy(this.gameObject);
+        }
     }
 
     private void CalculateMovement()
@@ -33,6 +50,10 @@ public class HomingMissile : MonoBehaviour
             float rotateAmount = Vector3.Cross(direction, transform.up).z;
             _rigidBody.angularVelocity = -_angleChangingSpeed * rotateAmount;
             _rigidBody.velocity = transform.up * _speed;
+        }
+        else
+        {
+            transform.Translate(Vector3.up * _speed * Time.deltaTime);
         }
     }
 

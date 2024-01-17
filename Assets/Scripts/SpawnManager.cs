@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class SpawnManager : MonoBehaviour
 {
+    [SerializeField] private GameObject _bossPrefab;
     [SerializeField] private GameObject _enemyPrefab;
     [SerializeField] private GameObject _enemy2Prefab;
     [SerializeField] private GameObject _enemy3Prefab;
@@ -11,10 +12,10 @@ public class SpawnManager : MonoBehaviour
     [SerializeField] private GameObject[] _powerups;
                      private GameObject _powerup;
                      
-                     private bool _stopSpawning = false;
+    [SerializeField] private bool _stopSpawning = false;
 
                      private int _rarity;
-                     private int _currentWave = 0;
+    [SerializeField] private int _currentWave = 0;
     void Start()
     {
         //_rarity = GetComponent<Powerup>().ReturnRarity();
@@ -38,6 +39,11 @@ public class SpawnManager : MonoBehaviour
             yield return new WaitForSeconds(3f);
 
             _currentWave++;
+            if (_currentWave == 5)
+            {
+                _stopSpawning = true;
+                SpawnBoss();
+            }
         }
     }
 
@@ -125,5 +131,12 @@ public class SpawnManager : MonoBehaviour
     public void OnPlayerDeath()
     {
         _stopSpawning = true;
+    }
+
+    private void SpawnBoss()
+    {
+        Vector3 posToSpawn = new Vector3(0.75f, 14.45f, 0f);
+        GameObject newEnemy = Instantiate(_bossPrefab, posToSpawn, Quaternion.identity);
+        newEnemy.transform.parent = _enemyContainer.transform;
     }
 }
