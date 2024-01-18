@@ -7,9 +7,12 @@ public class Boss : MonoBehaviour
                      private bool  _isDead;
     [SerializeField] private float _fireInterval;
     [SerializeField] private float _health;
+                     private float _shrinkDuration = 4f;
     [SerializeField] private GameObject _doubleShotPrefab;
     [SerializeField] private GameObject _laserPrefab;
     [SerializeField] private GameObject _explosionPrefab;
+                     private Player _player;
+                     private CameraShake _cameraShake;
 
     [Header("Movement Settings")]
     [SerializeField] private float _speed;
@@ -28,12 +31,9 @@ public class Boss : MonoBehaviour
 
     void Start()
     {
+        _cameraShake = GameObject.Find("Main Camera").GetComponent<CameraShake>();
+        _player = GameObject.Find("Player").GetComponent<Player>();
         StartCoroutine(MoveOntoScreen());
-    }
-
-    void Update()
-    {
-        
     }
 
     private IEnumerator MoveOntoScreen()
@@ -75,7 +75,7 @@ public class Boss : MonoBehaviour
             yield return new WaitForSeconds(Random.Range(1f, 4f));
             if(!_isDead)
             {
-                GameObject lasers = Instantiate(_doubleShotPrefab, transform.position + new Vector3(0, -3, 0), Quaternion.identity); //-0.75f, -3.45f, 0f 
+                GameObject lasers = Instantiate(_doubleShotPrefab, transform.position + new Vector3(0, -3, 0), Quaternion.identity); 
                 
                 foreach (Transform laser in lasers.transform)
                 {
@@ -162,7 +162,9 @@ public class Boss : MonoBehaviour
             if (_health == 0)
             {
                 DestroyBoss();
+                _player.AddToScore(50);
             }
+            Destroy(other.gameObject);
         }
 
         if (other.tag == "Missile")
@@ -170,12 +172,57 @@ public class Boss : MonoBehaviour
             _health -= 3;
             if (_health <= 0)
             {
+                Debug.Log(_health);
                 DestroyBoss();
+                _player.AddToScore(50);
             }
         }
     }
 
     private void DestroyBoss()
     {
+        StopCoroutine(FigureEightMovement());
+        StopCoroutine(FireLaserRoutine());
+        StopCoroutine(LaserFanRoutine());
+        StopCoroutine(ShotgunRoutine());
+        StartCoroutine(BossExplosionsRoutine());
+        StartCoroutine(MakeSmallerRoutine());
+    }
+
+    private IEnumerator BossExplosionsRoutine()
+    {
+        SpriteRenderer color = GetComponent<SpriteRenderer>();
+        Instantiate(_explosionPrefab, transform.position + new Vector3(0f, 1f, 0f), Quaternion.identity);
+        _cameraShake.Shake();
+        color.color = new Color(color.color.r, color.color.g, color.color.b, 0.75f);
+        yield return new WaitForSeconds(1);
+        Instantiate(_explosionPrefab, transform.position + new Vector3(-1f, 0f, 0f), Quaternion.identity);
+        _cameraShake.Shake();
+        color.color = new Color(color.color.r, color.color.g, color.color.b, 0.5f);
+        yield return new WaitForSeconds(1);
+        Instantiate(_explosionPrefab, transform.position + new Vector3(0f, -1f, 0f), Quaternion.identity);
+        _cameraShake.Shake();
+        color.color = new Color(color.color.r, color.color.g, color.color.b, 0.25f);
+        yield return new WaitForSeconds(1);
+        Instantiate(_explosionPrefab, transform.position + new Vector3(1f, 0f, 0f), Quaternion.identity);
+        _cameraShake.Shake();
+        yield return new WaitForSeconds(1);
+        Destroy(gameObject);
+    }
+
+    private IEnumerator MakeSmallerRoutine()
+    {
+        Vector3 initialScale = transform.localScale;
+        Vector3 targetScale = new Vector3(0.0f, 0.0f, 0.0f);
+
+        float elapsedTime = 0f;
+
+        while (elapsedTime < _shrinkDuration)
+        {
+            transform.localScale = Vector3.Lerp(initialScale, targetScale, elapsedTime / _shrinkDuration);
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+        transform.localScale = targetScale;
     }
 }

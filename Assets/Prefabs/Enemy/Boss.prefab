@@ -11,6 +11,8 @@ GameObject:
   - component: {fileID: 673154181083706453}
   - component: {fileID: 3359732653599384826}
   - component: {fileID: 4903913440731167373}
+  - component: {fileID: 6010612703850153472}
+  - component: {fileID: 5468673850519378951}
   m_Layer: 0
   m_Name: Boss
   m_TagString: Enemy
@@ -95,7 +97,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _fireInterval: 6
-  _health: 25
+  _health: 10
   _doubleShotPrefab: {fileID: 7636473858901800363, guid: fb069d1b36a4aab49b73d78df2c92fd2,
     type: 3}
   _laserPrefab: {fileID: 2952300440138054687, guid: a01e61d326770c844847c4286d2b5998,
@@ -111,3 +113,50 @@ MonoBehaviour:
   _shotgunSpeed: 5
   _spreadAngle: 30
   _numOfShotgunLasers: 8
+--- !u!50 &6010612703850153472
+Rigidbody2D:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8827842247599892570}
+  m_BodyType: 0
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDrag: 0
+  m_AngularDrag: 0.05
+  m_GravityScale: 0
+  m_Material: {fileID: 0}
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0
+--- !u!61 &5468673850519378951
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8827842247599892570}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: -0.7567351, y: -1.7542424}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 20.48, y: 20.48}
+    newSize: {x: 20.48, y: 20.48}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 3.694243, y: 5.689332}
+  m_EdgeRadius: 0

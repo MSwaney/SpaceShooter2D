@@ -256,8 +256,6 @@ public class Enemy : MonoBehaviour
                 {
                     if (transform.position.x < _player.transform.position.x)
                     {
-                        Debug.Log("Made it!");
-
                         transform.Translate(Vector3.left * _speed * _evasionDistance * Time.deltaTime);
                     }
                     else
