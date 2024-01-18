@@ -13,6 +13,7 @@ public class SpawnManager : MonoBehaviour
                      private GameObject _powerup;
                      
     [SerializeField] private bool _stopSpawning = false;
+    [SerializeField] private bool _stopSpawningPowerups = false;
 
                      private int _rarity;
     [SerializeField] private int _currentWave = 0;
@@ -91,7 +92,7 @@ public class SpawnManager : MonoBehaviour
     {
         yield return new WaitForSeconds(3.0f);
 
-        while (_stopSpawning == false)
+        while (_stopSpawning == false || _stopSpawningPowerups == false)
         {
             int totalRarity = 0;
 

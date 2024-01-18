@@ -4,12 +4,12 @@ using UnityEngine;
 
 public class Laser : MonoBehaviour
 {
-    [SerializeField]
-    private float _speed = 8f;
-    private bool _isEnemyLaser;
     private bool _fireUp = false;
-    [SerializeField]
-    private float _enemyLaserSpeed;
+    private bool _isBossLaser;
+    private bool _isEnemyLaser;
+    
+    [SerializeField] private float _enemyLaserSpeed;
+    [SerializeField] private float _speed = 8f;
 
 
     void Update()
@@ -36,13 +36,16 @@ public class Laser : MonoBehaviour
 
     public void CalculateMovement()
     {
-        if (_isEnemyLaser && !_fireUp)
+        if (!_isBossLaser)
         {
-            transform.Translate(Vector3.down * _speed* _enemyLaserSpeed * Time.deltaTime);
-        }
-        else
-        {
-            transform.Translate(Vector3.up * _speed * Time.deltaTime);
+            if (_isEnemyLaser && !_fireUp)
+            {
+                transform.Translate(Vector3.down * _speed * _enemyLaserSpeed * Time.deltaTime);
+            }
+            else
+            {
+                transform.Translate(Vector3.up * _speed * Time.deltaTime);
+            }
         }
     }
 
@@ -56,6 +59,17 @@ public class Laser : MonoBehaviour
     {
         return _isEnemyLaser;       
     }
+    
+    public void AssignBossLaser()
+    {
+        this.tag = "BossLaser";
+        _isBossLaser = true;
+    }
+
+    public bool IsBossLaser() 
+    { 
+        return _isBossLaser; 
+    }
 
     public void FireUp()
     {
@@ -64,7 +78,7 @@ public class Laser : MonoBehaviour
 
     public void OnTriggerEnter2D(Collider2D other)
     {
-        if (_isEnemyLaser)
+        if (_isEnemyLaser || _isBossLaser)
         {
             if(other.tag == "Player")
             {

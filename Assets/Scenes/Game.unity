@@ -1127,6 +1127,7 @@ MonoBehaviour:
   - {fileID: 6546775422994547983, guid: 36dc1022d358d6b4e856bb5bc0c13acd, type: 3}
   - {fileID: 2738473834288089875, guid: 71ba6ec0d1bdf4c4892b68642db179c1, type: 3}
   _stopSpawning: 0
+  _stopSpawningPowerups: 0
   _currentWave: 4
 --- !u!4 &874035869
 Transform:
@@ -2265,7 +2266,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1426311963
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3936,7 +3937,7 @@ PrefabInstance:
     - target: {fileID: 3439494144747399830, guid: d463802a887b17449a7a91b4083937f5,
         type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d463802a887b17449a7a91b4083937f5, type: 3}
