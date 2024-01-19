@@ -25,8 +25,7 @@ public class Enemy : MonoBehaviour
 
     void Start()
     {
-        int shieldChance = Random.Range(1, 100);
-        if (shieldChance % 20 == 0)
+        if (Random.value < .2f && tag != "Enemy3")
         {
             _isShieldActive = true;
             _shield.SetActive(true);

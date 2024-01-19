@@ -197,6 +197,10 @@ public class Player : MonoBehaviour
         }
 
         _lives--;
+        if (_lives < 0)
+        {
+            _lives = 0;
+        }
 
         if (_lives == 2)
         {

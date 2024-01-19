@@ -24,6 +24,7 @@ public class SpawnManager : MonoBehaviour
 
     public void StartSpawning()
     {
+        _stopSpawning = false;
         StartCoroutine(WaveRoutine());
         //StartCoroutine(SpawnEnemyRoutine());
         StartCoroutine(SpawnPowerupRoutine());

@@ -11,8 +11,9 @@ public class Boss : MonoBehaviour
     [SerializeField] private GameObject _doubleShotPrefab;
     [SerializeField] private GameObject _laserPrefab;
     [SerializeField] private GameObject _explosionPrefab;
-                     private Player _player;
                      private CameraShake _cameraShake;
+                     private Player _player;
+                     private SpawnManager _spawnManager;
 
     [Header("Movement Settings")]
     [SerializeField] private float _speed;
@@ -33,6 +34,7 @@ public class Boss : MonoBehaviour
     {
         _cameraShake = GameObject.Find("Main Camera").GetComponent<CameraShake>();
         _player = GameObject.Find("Player").GetComponent<Player>();
+        _spawnManager = GameObject.Find("Spawn_Manager").GetComponent<SpawnManager>();
         StartCoroutine(MoveOntoScreen());
     }
 
@@ -187,6 +189,7 @@ public class Boss : MonoBehaviour
         StopCoroutine(ShotgunRoutine());
         StartCoroutine(BossExplosionsRoutine());
         StartCoroutine(MakeSmallerRoutine());
+        _spawnManager.StartSpawning();
     }
 
     private IEnumerator BossExplosionsRoutine()

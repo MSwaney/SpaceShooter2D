@@ -49,6 +49,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1522ffc1e7bb78846a98e9d565754fb4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _evasionDistance: 0
+  _laserDetectionDistance: 0
   _ramDistance: 5
   _ramSpeed: 1.5
   _speed: 4
@@ -335,6 +337,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Shield
+      objectReference: {fileID: 0}
+    - target: {fileID: 6885237062107818954, guid: 4613b2fd52e6c294ea4925b4524076b1,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4613b2fd52e6c294ea4925b4524076b1, type: 3}
